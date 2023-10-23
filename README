@@ -1,0 +1,4 @@
+Run the Following Commands:
+
+make 
+sudo ./run <hammer_count_per_row> <number_of_hugepages_to_be_used>

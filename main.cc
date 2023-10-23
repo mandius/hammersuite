@@ -160,7 +160,7 @@ int main(int argc, char** argv) {
 	//Allocate hugepages using mmap
 	for( int num=0; num<run_size; num++){
 		start_addr[num] = (uint64_t)mmap(NULL, HUGEPAGE_SIZE, PROT_READ|PROT_WRITE,MAP_PRIVATE | MAP_POPULATE | MAP_ANONYMOUS | MAP_HUGETLB | (21 << MAP_HUGE_SHIFT),  NULL, 0) ;
-		*(uint64_t*)start_addr[num] =1;
+	
 		if((uint64_t*)start_addr[num] == NULL){
 			printf("Mapping failed for index = %0d\n", num);
 			exit(1);
@@ -181,8 +181,6 @@ int main(int argc, char** argv) {
 		rowmap rm_temp;
 		int row =0;
 		int bank =0;
-		//Adding a line here to prevent the lazy allocation
-		printf("start_addr[%0d]=%lx\n", num, start_addr[num]);
 
 		rm_temp = get_physical_mapping(start_addr[num]);
 		int base_row = rm_temp.row;
@@ -213,7 +211,7 @@ int main(int argc, char** argv) {
 	fclose(addr_log);
 	fclose(hammer_log);
 	fclose(coverage_log);
-	
+	delete [] start_addr;
 }
 		
 
