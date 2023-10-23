@@ -1,0 +1,2 @@
+exe/hammer $1 $2
+python3 collect_coverage.py
