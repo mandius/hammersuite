@@ -5,7 +5,7 @@ python3 collect_coverage.py
 cp -rf final_coverage.stat run_data/
 grep FLIP run_data/hammer.log |tee run_data/flip_table
 datel=$(date '+%m_%d_%Y_%H_%M_%S')
-zip -r run_data_${datel}.zip run_data
-python3 ./scripts/email_script.py run_data_${datel}.zip 
+zip -r run_data_$1_$2_${datel}.zip run_data
+python3 ./scripts/email_script.py run_data_$1_$2_${datel}.zip
 rm -rf run_data
 
