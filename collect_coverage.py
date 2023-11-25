@@ -9,7 +9,7 @@ for line in lines:
  
 final_cov.close()
 
-current_cov = open("run_coverage.log", "r")
+current_cov = open("run_data/run_coverage.log", "r")
 lines = current_cov.readlines()
 for line in lines:
     row_num = int(line.strip(), base=16)

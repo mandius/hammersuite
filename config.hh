@@ -22,7 +22,7 @@
 #define COL_SIZE  8 //in bytes.
 #define N_COLS_PER_ROW  (ROW_SIZE/COL_SIZE)
 #define PAGE_SIZE  4096
-#define N_HUGEPAGE 1024
+#define N_HUGEPAGE 512
 #define HUGEPAGE_SIZE 2*1024*1024
 #define OIO  0
 #define IOI  1

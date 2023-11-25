@@ -43,7 +43,7 @@ void check_row(rowmap rm, int bit_value){
 	for( int i=0; i< ROW_SIZE/sizeof(check_value); i++){
 		value = *(start_addr +i);
 		if(check_value != value){
-			fprintf(hammer_log, "[FLIP] Bit flip observed for row =%lx, bank =%lx, Expected Value = %lx, Actual Value = %lx\n", rm.row, rm.bank, check_value, value);
+			fprintf(hammer_log, "[FLIP] Bit flip observed for row =%lx, bank =%lx, col=%lx, Expected Value = %lx, Actual Value = %lx\n", rm.row, rm.bank, i,  check_value, value);
 			fflush(hammer_log);
 		}
 
@@ -138,19 +138,21 @@ int main(int argc, char** argv) {
 
 	start_addr = new uint64_t [run_size];
 
-	coverage_log = fopen("run_coverage.log", "w");
+	coverage_log = fopen("run_data/run_coverage.log", "w");
 	if(coverage_log ==0){
-		printf("Not able to open coverage_log .....  exiting\n");
+		fprintf(hammer_log, "Not able to open coverage_log .....  exiting\n");
+		fflush(hammer_log);
 		exit(1);
 	}
 
-	addr_log = fopen("addr.log", "w");
+	addr_log = fopen("run_data/addr.log", "w");
 	if(addr_log ==0){
-		printf("Not able to open addr_log .....  exiting\n");
+		fprintf(hammer_log, "Not able to open addr_log .....  exiting\n");
+		fflush(hammer_log);
 		exit(1);
 	}
 	assert(run_size< N_HUGEPAGE);
-	hammer_log= fopen("hammer.log", "w");
+	hammer_log= fopen("run_data/hammer.log", "w");
 	if(hammer_log ==0){
 		printf("Not able to open hammer_log .....  exiting\n");
 		exit(1);
@@ -162,12 +164,14 @@ int main(int argc, char** argv) {
 		start_addr[num] = (uint64_t)mmap(NULL, HUGEPAGE_SIZE, PROT_READ|PROT_WRITE,MAP_PRIVATE | MAP_POPULATE | MAP_ANONYMOUS | MAP_HUGETLB | (21 << MAP_HUGE_SHIFT),  NULL, 0) ;
 	
 		if((uint64_t*)start_addr[num] == NULL){
-			printf("Mapping failed for index = %0d\n", num);
+			fprintf(hammer_log, "Mapping failed for index = %0d\n", num);
+			fflush(hammer_log);
 			exit(1);
 		}
 
 		if((start_addr[num]%ROW_SIZE) != 0){
-			printf("Addr from mmap %lx is not aligned to row boundary %ll\n", start_addr[num], ROW_SIZE);
+			fprintf(hammer_log, "Addr from mmap %lx is not aligned to row boundary %ll\n", start_addr[num], ROW_SIZE);
+			fflush(hammer_log);
 			exit(1);
 		}
 

@@ -20,5 +20,6 @@ clean:
 	rm -rf $(BUILD)
 	rm -rf $(ODIR)
 	rm -rf *.log
+	rm -rf run_data
 
 
