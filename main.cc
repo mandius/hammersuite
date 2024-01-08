@@ -111,7 +111,126 @@ void hammer(rowmap agg1, rowmap agg2, rowmap victim, int rounds, int pattern){
 }
 	
 
+// Hammering all the rows in a hugepage.
+int	vulnerable_rows[] = {
+				8730 ,
+				36656 ,
+				43942 ,
+				10404 ,
+				43941 ,
+				31892 ,
+				49198 ,
+				32911 ,
+				78354 ,
+				56465 ,
+				23962 ,
+				39348 ,
+				21771 ,
+				17678 ,
+				35363 ,
+				63669 ,
+				75286 ,
+				56716 ,
+				17674 ,
+				9897 ,
+				37546 ,
+				5898 ,
+				36245 ,
+				37408 ,
+				48796 ,
+				430519 ,
+				14632 ,
+				57897 ,
+				46769 ,
+				7732 ,
+				3612 ,
+				47637 ,
+				33807 ,
+				49461 ,
+				17946 ,
+				37266 ,
+				28564 ,
+				6664 ,
+				52395 ,
+				21512 ,
+				52404 ,
+				44698 ,
+				35377 ,
+				36377 ,
+				36897 ,
+				35339 ,
+				29613 ,
+				8738 ,
+				36006 ,
+				44825 ,
+				29456 ,
+				27945 ,
+				11784 ,
+				52003 ,
+				10519 ,
+				72611 ,
+				8712 ,
+				32530 ,
+				64272 ,
+				53512 ,
+				34579 ,
+				37259 ,
+				21515 ,
+				2845 ,
+				34594 ,
+				34592 ,
+				17708 ,
+				43560 ,
+				35244 ,
+				23344 ,
+				37260 ,
+				23348 ,
+				12305 ,
+				41227 ,
+				42396 ,
+				45452 ,
+				40885 ,
+				29869 ,
+				38822 ,
+				57245 ,
+				37286 ,
+				27690 ,
+				7181 ,
+				444982 ,
+				42637 ,
+				36873 ,
+				36507 ,
+				37281 ,
+				7084 ,
+				27671 ,
+				13842 ,
+				34572 ,
+				4766 ,
+				30758 ,
+				42540 ,
+				427276 ,
+				35113 ,
+				6696 ,
+				62984 ,
+				35346 ,
+				};
 
+
+
+bool check_vulnerable_row(rowmap victim){
+
+	for(int i=0; i< 100; i++){
+		int bank = vulnerable_rows[i]%8;
+		int row = int(vulnerable_rows[i]/8);
+		if((bank == victim.bank)&& (row==victim.row)) {
+			fprintf(hammer_log, "Vulnerable Row Found Row =%0d, Bank=%0d\n", victim.row, victim.bank);
+			fflush(hammer_log);
+			
+			return true;
+		}
+	}
+	return false;
+}	
 
 
 
@@ -158,7 +277,7 @@ int main(int argc, char** argv) {
 		exit(1);
 	}
 
-
+	
 	//Allocate hugepages using mmap
 	for( int num=0; num<run_size; num++){
 		start_addr[num] = (uint64_t)mmap(NULL, HUGEPAGE_SIZE, PROT_READ|PROT_WRITE,MAP_PRIVATE | MAP_POPULATE | MAP_ANONYMOUS | MAP_HUGETLB | (21 << MAP_HUGE_SHIFT),  NULL, 0) ;
@@ -177,7 +296,6 @@ int main(int argc, char** argv) {
 
 			
 	}
-
 	for (int num=0; num< run_size; num++){
 		fprintf(addr_log, "===================================================== Run Index =%0d ================================================================\n", num);
 		fflush(addr_log);
@@ -206,12 +324,21 @@ int main(int argc, char** argv) {
 				agg1 = rm[bank][row];
 				victim = rm[bank][row+1];
 				agg2 = rm[bank][row+2];
-				hammer(agg1, agg2, victim, rounds, OIO);
-				hammer(agg1, agg2, victim, rounds,  IOI);
+				//if(check_vulnerable_row(victim)){
+				//	for(int times=0; times<50; times++){
+						hammer(agg1, agg2, victim, rounds, OIO);
+						hammer(agg1, agg2, victim, rounds,  IOI);
+				//	}
+				//}
 			}
 			fprintf(coverage_log, "%lx\n", victim.row);
 		}
  	}
+	
+	
+	
+		
+
 	fclose(addr_log);
 	fclose(hammer_log);
 	fclose(coverage_log);

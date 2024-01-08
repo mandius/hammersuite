@@ -15,7 +15,7 @@
 #define CONFIG
 
 #define ROW_SIZE 8192 //Bytes
-#define N_BANKS 8
+#define N_BANKS 16
 #define N_RANKS 1
 #define MEM_SIZE 4  //Memory Size in GB.
 #define N_ROWS  (MEM_SIZE*1024*1024*1024)/(N_RANKS*N_BANKS*ROW_SIZE)
