@@ -14,10 +14,30 @@
 #ifndef CONFIG
 #define CONFIG
 
+
+//Uncomment only the config for which you are running this suite.
+#define CONFIG_1x8x16x10
+//#define CONFIG_2x8x16x10
+
+
+
 #define ROW_SIZE 8192 //Bytes
-#define N_BANKS 16
+
+#ifdef CONFIG_1x8x16x10
+	#define N_BANKS 8
+	#define MEM_SIZE 4  //Memory Size in GB.
+#endif
+
+#ifdef CONFIG_2x8x16x10
+	#define N_BANKS 16
+	#define MEM_SIZE 8  //Memory Size in GB.
+#endif
+
+
+
+
 #define N_RANKS 1
-#define MEM_SIZE 4  //Memory Size in GB.
+
 #define N_ROWS  (MEM_SIZE*1024*1024*1024)/(N_RANKS*N_BANKS*ROW_SIZE)
 #define COL_SIZE  8 //in bytes.
 #define N_COLS_PER_ROW  (ROW_SIZE/COL_SIZE)
