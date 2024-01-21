@@ -25,7 +25,7 @@ rowmap get_physical_mapping( uint64_t v_addr){
 
 #ifdef CONFIG_1x8x16x10
 	//Mapping for 1 x 8 x 16 x 10
-	rm.bank =  (get_bit(p_addr, 13) ^ get_bit(p_addr, 16) | ((get_bit(p_addr, 14) ^ get_bit(p_addr, 17)) <<1) | ((get_bit(p_addr, 15) ^ get_bit(p_addr, 18))<<2)  ;
+	rm.bank =  (get_bit(p_addr, 13) ^ get_bit(p_addr, 16) | ((get_bit(p_addr, 14) ^ get_bit(p_addr, 17)) <<1) | ((get_bit(p_addr, 15) ^ get_bit(p_addr, 18))<<2) ) ;
 	rm.row = ((p_addr>>16) & (0xffff));
 
 #endif 
