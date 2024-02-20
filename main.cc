@@ -1,4 +1,5 @@
 #include "config.hh"
+#include <stdlib.h>
 
 
 
@@ -9,6 +10,7 @@
 
 
 FILE* hammer_log;
+FILE* flip_table;
 
 void fill_row(rowmap rm, int bit_value){
 	uint64_t fill_value, value;
@@ -44,7 +46,9 @@ void check_row(rowmap rm, int bit_value){
 		value = *(start_addr +i);
 		if(check_value != value){
 			fprintf(hammer_log, "[FLIP] Bit flip observed for row =%lx, bank =%lx, col=%lx, Expected Value = %lx, Actual Value = %lx\n", rm.row, rm.bank, i,  check_value, value);
+			fprintf(flip_table,"%lx,%lx,%lx,%lx,%lx,%lx\n", rm.row, rm.bank, i, check_value, value, rm.p_addr);
 			fflush(hammer_log);
+			fflush(flip_table);
 		}
 
 	}
@@ -257,6 +261,14 @@ int main(int argc, char** argv) {
 
 	start_addr = new uint64_t [run_size];
 
+
+	assert(run_size< N_HUGEPAGE);
+	hammer_log= fopen("run_data/hammer.log", "w");
+	if(hammer_log ==0){
+		printf("Not able to open hammer_log .....  exiting\n");
+		exit(1);
+	}
+
 	coverage_log = fopen("run_data/run_coverage.log", "w");
 	if(coverage_log ==0){
 		fprintf(hammer_log, "Not able to open coverage_log .....  exiting\n");
@@ -270,12 +282,19 @@ int main(int argc, char** argv) {
 		fflush(hammer_log);
 		exit(1);
 	}
-	assert(run_size< N_HUGEPAGE);
-	hammer_log= fopen("run_data/hammer.log", "w");
-	if(hammer_log ==0){
-		printf("Not able to open hammer_log .....  exiting\n");
+
+
+	flip_table = fopen("run_data/flip_table", "w");
+	if(flip_table ==0){
+		fprintf(hammer_log, "Not able to open flip_table .....  exiting\n");
+		fflush(hammer_log);
 		exit(1);
 	}
+
+
+
+	fprintf(flip_table, "Row,Bank,Col,Expected_Value,Actual_Value,Physical_Address\n");
+	fflush(flip_table);
 
 	
 	//Allocate hugepages using mmap
@@ -299,6 +318,9 @@ int main(int argc, char** argv) {
 	for (int num=0; num< run_size; num++){
 		fprintf(addr_log, "===================================================== Run Index =%0d ================================================================\n", num);
 		fflush(addr_log);
+		system("clear");
+		printf("Progress = %f %\n", (float) num/ run_size); 
+
 		rowmap  rm[N_BANKS][N_ROW_HUGEPAGE];
 		rowmap rm_temp;
 		int row =0;
